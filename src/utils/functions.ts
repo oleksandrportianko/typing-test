@@ -1,5 +1,8 @@
 import { WORDS_LIST } from "./constants";
 
+// Function to get a random text with a given length
+// params: length: number
+// returns: string
 export const getRandomText = (length: number) => {
     const wordsLength = WORDS_LIST.length;
 
