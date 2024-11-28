@@ -1,4 +1,7 @@
+import { addDoc, collection } from "firebase/firestore"
 import { FC, useState } from "react"
+
+import { db } from "../firebase/config"
 
 import Modal from "./Modal"
 
@@ -32,7 +35,10 @@ const ResultModal: FC<TResultModalProps> = ({ onClose, accuracy, wpm, cpm }) => 
             cpm,
         }
 
-        console.log(results)
+        addDoc(collection(db, "typing-results"), {
+            ...results,
+            timestamp: Date.now()
+        });
         onClose()
     }
 
