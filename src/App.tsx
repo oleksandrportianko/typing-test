@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from "react";
 
 import { getRandomText } from "./utils/functions";
 import { TFinishedWord } from "./utils/types";
+import ResultModal from "./components/ResultModal";
 
 function App() {
   const [selectedText, setSelectedText] = useState<string[]>(getRandomText(150));
   const [finishedWords, setFinishedWords] = useState<TFinishedWord[]>([]);
   const [finishedWordsWidth, setFinishedWordsWidth] = useState<number>(0);
   const [isTypingStarted, setIsTypingStarted] = useState<boolean>(false);
+  const [showResultModal, setShowResultModal] = useState<boolean>(false);
   const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
   const [inputTextWidth, setInputTextWidth] = useState<number>(0);
   const [wrongWord, setWrongWord] = useState<boolean>(false);
@@ -57,6 +59,19 @@ function App() {
     }
   }
 
+  const handleCloseModal = () => {
+    setShowResultModal(false);
+    setSelectedText(getRandomText(150));
+    setFinishedWords([]);
+    setCurrentWordIndex(0);
+    setInputText('');
+    setTimeEnd(false);
+    setTimeLeft(60);
+    setAccuracy(0);
+    setWpm(0);
+    setCpm(0);
+  }
+
   useEffect(() => {
     if (finishedWordsRef.current) {
       setFinishedWordsWidth(finishedWordsRef.current.offsetWidth);
@@ -90,6 +105,7 @@ function App() {
     } else if (isTypingStarted && timeLeft === 0) {
       setIsTypingStarted(false);
       setTimeEnd(true);
+      setShowResultModal(true);
     }
 
     return () => clearInterval(interval);
@@ -186,6 +202,14 @@ function App() {
           {inputText}
         </div>
       </div>
+      {showResultModal && (
+        <ResultModal
+          onClose={handleCloseModal}
+          accuracy={accuracy}
+          wpm={wpm}
+          cpm={cpm}
+        />
+      )}
     </div>
   );
 }
