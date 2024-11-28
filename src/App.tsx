@@ -9,12 +9,22 @@ function App() {
   const [finishedWordsWidth, setFinishedWordsWidth] = useState<number>(0);
   const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
   const [inputTextWidth, setInputTextWidth] = useState<number>(0);
+  const [wrongWord, setWrongWord] = useState<boolean>(false);
   const [inputText, setInputText] = useState<string>('');
-
-  console.log(finishedWords)
 
   const finishedWordsRef = useRef<HTMLDivElement>(null);
   const currentWordsRef = useRef<HTMLDivElement>(null);
+
+  const handleChangeValue = (value: string) => {
+    setInputText(value);
+
+    const currentWord = selectedText[currentWordIndex];
+    if (currentWord.startsWith(value.trim())) {
+      setWrongWord(false);
+    } else {
+      setWrongWord(true);
+    }
+  }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === ' ' && e.currentTarget.value.trim() !== '') {
@@ -50,7 +60,7 @@ function App() {
       <div className="bg-[#212121] max-w-[800px] w-full h-[80px] rounded-xl relative overflow-hidden">
         <input
           className="bg-transparent w-1/2 h-full text-[#FA00FB] text-[28px] leading-[36px] font-semibold tracking-[0.02em] outline-none text-end relative z-[2]"
-          onChange={(e) => setInputText(e.target.value)}
+          onChange={(e) => handleChangeValue(e.target.value)}
           onKeyDown={(e) => handleKeyDown(e)}
           value={inputText}
           type="text"
