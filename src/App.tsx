@@ -1,14 +1,44 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { getRandomText } from "./utils/functions";
+import { TFinishedWord } from "./utils/types";
 
 function App() {
-  const [selectedText, setSelectedText] = useState<string>(getRandomText(150));
+  const [selectedText, setSelectedText] = useState<string[]>(getRandomText(150));
+  const [finishedWords, setFinishedWords] = useState<TFinishedWord[]>([]);
+  const [finishedWordsWidth, setFinishedWordsWidth] = useState<number>(0);
+  const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
+  const [inputTextWidth, setInputTextWidth] = useState<number>(0);
   const [inputText, setInputText] = useState<string>('');
 
-  const lengthRef = useRef<HTMLDivElement>(null);
+  console.log(finishedWords)
 
-  console.log(lengthRef.current?.scrollWidth);
+  const finishedWordsRef = useRef<HTMLDivElement>(null);
+  const currentWordsRef = useRef<HTMLDivElement>(null);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === ' ' && e.currentTarget.value.trim() !== '') {
+      const currentWord = selectedText[currentWordIndex];
+      const correct = currentWord === inputText.trim();
+
+      setFinishedWords((prev) => [...prev, { word: currentWord, correct }]);
+
+      setCurrentWordIndex((prev) => prev + 1);
+      setInputText('');
+    } else if (e.key === ' ' && e.currentTarget.value.trim() === '') {
+      e.preventDefault();
+    }
+  }
+
+  useEffect(() => {
+    if (finishedWordsRef.current) {
+      setFinishedWordsWidth(finishedWordsRef.current.offsetWidth);
+    }
+
+    if (currentWordsRef.current) {
+      setInputTextWidth(currentWordsRef.current.offsetWidth);
+    }
+  }, [finishedWords, inputText])
 
   return (
     <div className="w-full min-h-[100vh] bg-[#000000] flex flex-col justify-center items-center gap-10 p-10">
@@ -19,21 +49,48 @@ function App() {
         <input
           className="bg-transparent w-1/2 h-full text-[#FA00FB] text-[28px] leading-[36px] font-semibold tracking-[0.02em] outline-none text-end relative z-[2]"
           onChange={(e) => setInputText(e.target.value)}
+          onKeyDown={(e) => handleKeyDown(e)}
           value={inputText}
           type="text"
         />
         <div
-          style={{ marginLeft: `-${lengthRef?.current?.scrollWidth}px` }}
+          style={{ marginLeft: `-${finishedWordsWidth + inputTextWidth}px` }}
           className="text-[#484747] text-[28px] leading-[36px] font-semibold tracking-[0.02em] absolute whitespace-nowrap left-1/2 top-1/2 translate-y-[-50%] h-full flex items-center mt-[1px]"
         >
-          {selectedText}
+          {selectedText.join(' ')}
+        </div>
+        <div
+          style={{ marginRight: `${inputTextWidth}px` }}
+          className="absolute text-[28px] leading-[36px] font-semibold tracking-[0.02em] top-1/2 translate-y-[-50%] whitespace-nowrap right-1/2 mt-[1px]"
+        >
+          {finishedWords.map((word, index) => (
+            <span key={index} className={word.correct ? 'text-[#484747]' : 'text-[#484747] line-through'}>
+              {word.word}
+              {index !== finishedWords.length - 1 && ' '}
+            </span>
+          ))}
         </div>
       </div>
       <div
-        className="whitespace-nowrap text-[28px] leading-[36px] font-semibold tracking-[0.02em] opacity-0"
-        ref={lengthRef}
+        className="text-[28px] leading-[36px] font-semibold tracking-[0.02em] whitespace-nowrap absolute w-[90000px] top-[-50px]"
       >
-        {inputText}
+        <div
+          ref={finishedWordsRef}
+          className="whitespace-break-spaces w-fit"
+        >
+          {finishedWords.map((word, index) => (
+            <span key={index}>
+              {word.word}
+              {index !== finishedWords.length - 1 && ' '}
+            </span>
+          ))}
+        </div>
+        <div
+          ref={currentWordsRef}
+          className="whitespace-break-spaces w-fit"
+        >
+          {inputText}
+        </div>
       </div>
     </div>
   );
