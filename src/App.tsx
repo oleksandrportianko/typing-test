@@ -27,6 +27,10 @@ function App() {
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.metaKey && e.key === "a") {
+      e.preventDefault();
+    }
+
     if (e.key === ' ' && e.currentTarget.value.trim() !== '') {
       const currentWord = selectedText[currentWordIndex];
       const correct = currentWord === inputText.trim();
@@ -59,21 +63,21 @@ function App() {
       </h2>
       <div className="bg-[#212121] max-w-[800px] w-full h-[80px] rounded-xl relative overflow-hidden">
         <input
-          className="bg-transparent w-1/2 h-full text-[#FA00FB] text-[28px] leading-[36px] font-semibold tracking-[0.02em] outline-none text-end relative z-[2]"
+          className={`bg-transparent w-1/2 h-full text-[#FA00FB] text-[28px] leading-[36px] font-semibold tracking-[0.02em] outline-none text-end relative z-[2] select-none ${wrongWord ? 'line-through' : ''}`}
           onChange={(e) => handleChangeValue(e.target.value)}
           onKeyDown={(e) => handleKeyDown(e)}
           value={inputText}
           type="text"
         />
         <div
-          style={{ marginLeft: `-${finishedWordsWidth + inputTextWidth}px` }}
+          style={{ marginLeft: `-${wrongWord ? finishedWordsWidth + 8 : finishedWordsWidth + inputTextWidth}px` }}
           className="text-[#484747] text-[28px] leading-[36px] font-semibold tracking-[0.02em] absolute whitespace-nowrap left-1/2 top-1/2 translate-y-[-50%] h-full flex items-center mt-[1px]"
         >
           {selectedText.join(' ')}
         </div>
         <div
-          style={{ marginRight: `${inputTextWidth}px` }}
-          className="absolute text-[28px] leading-[36px] font-semibold tracking-[0.02em] top-1/2 translate-y-[-50%] whitespace-nowrap right-1/2 mt-[1px]"
+          style={{ paddingRight: `${inputTextWidth}px` }}
+          className="absolute text-[28px] leading-[36px] font-semibold tracking-[0.02em] top-1/2 translate-y-[-50%] whitespace-nowrap right-1/2 mt-[1px] bg-[#212121]"
         >
           {finishedWords.map((word, index) => (
             <span key={index} className={word.correct ? 'text-[#484747]' : 'text-[#484747] line-through'}>
