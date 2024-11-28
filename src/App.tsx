@@ -1,11 +1,15 @@
-import { useEffect, useRef, useState } from "react";
+import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
+import { Fragment, useEffect, useRef, useState } from "react";
 
 import { getRandomText } from "./utils/functions";
-import { TFinishedWord } from "./utils/types";
+import { TFinishedWord, TTypingResult } from "./utils/types";
+import { db } from "./firebase/config";
+
 import ResultModal from "./components/ResultModal";
 
 function App() {
   const [selectedText, setSelectedText] = useState<string[]>(getRandomText(150));
+  const [typingResults, setTypingResults] = useState<TTypingResult[]>([]);
   const [finishedWords, setFinishedWords] = useState<TFinishedWord[]>([]);
   const [finishedWordsWidth, setFinishedWordsWidth] = useState<number>(0);
   const [isTypingStarted, setIsTypingStarted] = useState<boolean>(false);
@@ -72,6 +76,28 @@ function App() {
     setCpm(0);
   }
 
+  const fetchTopResults = async () => {
+    try {
+      const q = query(
+        collection(db, "typing-results"),
+        orderBy("cpm", "desc"),
+        limit(10)
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      const data = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as TTypingResult[];
+
+      setTypingResults(data);
+    } catch (e) {
+      console.error("Error fetching data: ", e);
+    }
+  };
+
+  useEffect(() => {
+    fetchTopResults();
+  }, []);
+
   useEffect(() => {
     if (finishedWordsRef.current) {
       setFinishedWordsWidth(finishedWordsRef.current.offsetWidth);
@@ -112,7 +138,7 @@ function App() {
   }, [isTypingStarted, setIsTypingStarted, timeLeft]);
 
   return (
-    <div className="w-full min-h-[100vh] bg-[#000000] flex flex-col justify-center items-center gap-10 p-10">
+    <div className="w-full min-h-[100vh] bg-[#000000] flex flex-col justify-center items-center gap-10 px-10 py-[60px]">
       <h2 className="text-[60px] leading-[76px] text-[#FFFFFF] font-semibold tracking-[0.02em] max-w-[650px] text-center select-none">
         Reveal your <span className="text-[#FA00FB]">TYPING SPEED.</span> Start typing the text below.
       </h2>
@@ -202,8 +228,44 @@ function App() {
           {inputText}
         </div>
       </div>
+      <div className="max-w-[800px] mt-[40px] bg-[#212121] p-6 rounded-xl w-full flex flex-col gap-8">
+        <h5 className="text-[32px] leading-[40px] text-[#FFFFFF] font-semibold">
+          Top 10 Typing Results
+        </h5>
+        <div className="grid grid-cols-4 gap-4">
+          <span className="text-[24px] leading-[30px] text-[#484747]">
+            Nickname
+          </span>
+          <span className="text-[24px] leading-[30px] text-[#484747]">
+            CPM
+          </span>
+          <span className="text-[24px] leading-[30px] text-[#484747]">
+            RPM
+          </span>
+          <span className="text-[24px] leading-[30px] text-[#484747]">
+            Accuracy
+          </span>
+          {typingResults.map((result) => (
+            <Fragment key={result.id}>
+              <span className="text-[#FFFFFF] text-[18px] leading-[24px]">
+                {result.nickname}
+              </span>
+              <span className="text-[#FFFFFF] text-[18px] leading-[24px]">
+                {result.cpm}
+              </span>
+              <span className="text-[#FFFFFF] text-[18px] leading-[24px]">
+                {result.wpm}
+              </span>
+              <span className="text-[#FFFFFF] text-[18px] leading-[24px]">
+                {result.accuracy}%
+              </span>
+            </Fragment>
+          ))}
+        </div>
+      </div>
       {showResultModal && (
         <ResultModal
+          fetchTopResults={fetchTopResults}
           onClose={handleCloseModal}
           accuracy={accuracy}
           wpm={wpm}

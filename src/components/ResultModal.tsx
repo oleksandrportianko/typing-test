@@ -6,13 +6,20 @@ import { db } from "../firebase/config"
 import Modal from "./Modal"
 
 type TResultModalProps = {
+    fetchTopResults: () => void,
     onClose: () => void,
     accuracy: number,
     wpm: number,
     cpm: number,
 }
 
-const ResultModal: FC<TResultModalProps> = ({ onClose, accuracy, wpm, cpm }) => {
+const ResultModal: FC<TResultModalProps> = ({
+    onClose,
+    accuracy,
+    wpm,
+    cpm,
+    fetchTopResults
+}) => {
     const [nicknameError, setNicknameError] = useState<boolean>(false)
     const [shareResults, setShareResults] = useState<boolean>(false)
     const [nickname, setNickname] = useState<string>('')
@@ -39,6 +46,7 @@ const ResultModal: FC<TResultModalProps> = ({ onClose, accuracy, wpm, cpm }) => 
             ...results,
             timestamp: Date.now()
         });
+        fetchTopResults();
         onClose()
     }
 
