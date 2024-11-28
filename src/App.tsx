@@ -27,6 +27,8 @@ function App() {
       setInputText('');
     } else if (e.key === ' ' && e.currentTarget.value.trim() === '') {
       e.preventDefault();
+    } else if (e.key === 'Backspace' && e.currentTarget.value === ' ') {
+      e.preventDefault();
     }
   }
 
