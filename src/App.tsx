@@ -110,13 +110,13 @@ function App() {
 
   useEffect(() => {
     if (isTypingStarted) {
-      const correctWords = finishedWords.filter((word) => word.correct).length;
+      const correctWords = finishedWords.filter((word) => word.correct);
       const totalWords = finishedWords.length;
-      const accuracy = Math.round((100 / totalWords) * correctWords);
-      const cpmData = finishedWords.map((word) => word.word.split('')).flat().length;
+      const accuracy = Math.round((100 / totalWords) * correctWords.length);
+      const cpmData = correctWords.map((word) => word.word.split('')).flat().length;
 
+      setWpm(correctWords.length);
       setAccuracy(accuracy);
-      setWpm(correctWords);
       setCpm(cpmData);
     }
   }, [isTypingStarted, finishedWords]);
