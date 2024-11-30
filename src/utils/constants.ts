@@ -671,13 +671,9 @@ export const WORDS_LIST = [
     "wealthy",
     "welfare",
     "whistle",
-    "wildlife",
     "wisdom",
     "witness",
     "workshop",
-    "worthwhile",
     "writing",
     "yearly",
-    "youthful",
-    "zealous"
 ]
