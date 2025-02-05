@@ -299,47 +299,6 @@ function App() {
                     cpm={cpm}
                 />
             )}
-            <div
-                style={{
-                    width: "fit-content",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "end",
-                }}
-            >
-                <a
-                    href="https://qrcodeveloper.com/code/238IHpEvsFZpD3_Z"
-                    style={{ cursor: "pointer", display: "block" }}
-                >
-                    <img
-                        style={{
-                            width: "350px",
-                            boxShadow: "0 0 13px #00000040",
-                            borderRadius: "16px",
-                        }}
-                        src="https://qrcodeveloper.com/qr/images/image_RxQZd9A.jpg"
-                        alt="Create qr code for free"
-                    />
-                </a>
-                <a
-                    href="https://qrcodeveloper.com"
-                    style={{
-                        cursor: "pointer",
-                        color: "#9747FF",
-                        textDecoration: "none",
-                        fontSize: "14px",
-                        fontWeight: "500",
-                        marginTop: "5px",
-                    }}
-                >
-                    QR Code Developer
-                </a>
-                <img
-                    style={{ display: "none" }}
-                    src="https://api.qrcodeveloper.com/api/core/embed-code/track?user_id=IpJUgbjWl0Mi2LKM9TtoQfPKRhj2&code_id=698760"
-                    alt="Create qr code for free"
-                />
-            </div>
         </div>
     );
 }
